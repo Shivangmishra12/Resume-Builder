@@ -1133,10 +1133,18 @@ let state = {
   certs: []
 };
 
+// ─── BACKEND CONFIG ───────────────────────────────────────────────────────────
+// After deploying your backend to Railway or Render, paste its URL here.
+// Example: 'https://resume-builder-backend.up.railway.app'
+// Leave empty ('') to disable save/load (app still works for PDF export).
+const BACKEND_URL = 'https://resume-builder-backend-n6mm.onrender.com';
+// ──────────────────────────────────────────────────────────────────────────────
+
 async function saveResume() {
+  if (!BACKEND_URL) { showToast('⚠️ No backend URL configured'); return; }
   try {
     const payload = getValues();
-    const response = await fetch('/api/resume', {
+    const response = await fetch(`${BACKEND_URL}/api/resume`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -1150,8 +1158,9 @@ async function saveResume() {
 }
 
 async function loadSavedResume() {
+  if (!BACKEND_URL) return;
   try {
-    const response = await fetch('/api/resume');
+    const response = await fetch(`${BACKEND_URL}/api/resume`);
     if (!response.ok) return;
     const data = await response.json();
     if (data && Object.keys(data).length) {
